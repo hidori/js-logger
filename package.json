@@ -1,0 +1,29 @@
+{
+  "name": "@hidori/logger",
+  "version": "0.0.0",
+  "description": "Simple and flexible logger",
+  "author": "hidori",
+  "license": "MIT",
+  "keywords": [
+    "logger"
+  ],
+  "homepage": "https://github.com/hidori/node-logger#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hidori/node-logger.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hidori/node-logger/issues"
+  },
+  "main": "./index.js",
+  "type": "module",
+  "scripts": {
+    "format": "eslint ./index.js ./src --fix && prettier --write ./index.js ./src"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-standard": "^17.1.0",
+    "prettier": "^3.2.5"
+  }
+}
