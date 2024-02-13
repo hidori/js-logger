@@ -1,6 +1,6 @@
 {
   "name": "@hidori/logger",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Simple and flexible logger",
   "author": "hidori",
   "license": "MIT",
