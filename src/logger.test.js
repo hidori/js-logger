@@ -3,7 +3,7 @@ import * as Logger from "./logger.js";
 
 const now = new Date(Date.UTC(2024, 2, 16));
 
-describe("Logger", () => {
+describe("class Logger", () => {
   describe("xxx()", () => {
     const formatter = new Logger.TextFormatter();
 
@@ -133,7 +133,7 @@ describe("Logger", () => {
   });
 });
 
-describe("Presenter", () => {
+describe("class Presenter", () => {
   describe("printf()", () => {
     test("calls formatter.fomat() and writer.write()", () => {
       const format = jest.fn((timestamp, level, data) => {
@@ -154,22 +154,61 @@ describe("Presenter", () => {
   });
 });
 
-describe("TextFormatter", () => {
+describe("class TextFormatter", () => {
   describe("formt()", () => {
     const target = new Logger.TextFormatter();
 
-    expect(target.format(now, "format.level", "format.data")).toBe("2024-03-16T09:00:00+09:00 [FORMAT.LEVEL] format.data");
-  })
-})
+    expect(target.format(now, "format.level", "format.data")).toBe(
+      "2024-03-16T09:00:00+09:00 [FORMAT.LEVEL] format.data",
+    );
+  });
+});
 
-describe("JSONFormatter", () => {
+describe("class JSONFormatter", () => {
   describe("formt()", () => {
     const target = new Logger.JSONFormatter();
 
-    expect(target.format(now, "format.level", "format.data")).toBe(JSON.stringify({
-      timestamp: Logger.toISOStringWithTimezone(now),
-      level: "format.level",
-      data: "format.data",
-    }));
-  })
-})
+    expect(target.format(now, "format.level", "format.data")).toBe(
+      JSON.stringify({
+        timestamp: Logger.toISOStringWithTimezone(now),
+        level: "format.level",
+        data: "format.data",
+      }),
+    );
+  });
+});
+
+describe("class ConsoleWriter", () => {
+  describe("write()", () => {
+    // TODO:
+  });
+});
+
+describe("class FileWriter", () => {
+  describe("write()", () => {
+    // TODO:
+  });
+});
+
+describe("class StringWriter", () => {
+  describe("write() and toString()", () => {
+    const target = new Logger.StringWriter();
+
+    target.write("1");
+    target.write("2");
+    target.write("3");
+    expect(target.toString()).toBe("1\n2\n3\n");
+  });
+});
+
+describe("class ConsoleWriter", () => {
+  describe("write()", () => {
+    // TODO:
+  });
+});
+
+describe("function", () => {
+  describe("toISOStringWithTimezone()", () => {
+    // TODO:
+  });
+});
