@@ -131,7 +131,7 @@ describe("Logger", () => {
       );
     });
   });
-})
+});
 
 describe("Presenter", () => {
   describe("printf()", () => {
@@ -152,4 +152,4 @@ describe("Presenter", () => {
       expect(write.mock.calls.length).toBe(1);
     });
   });
-})
+});

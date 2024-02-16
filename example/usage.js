@@ -1,4 +1,4 @@
-import * as Logger from "./src/logger.js";
+import * as Logger from "../src/logger.js";
 
 const logger = new Logger.Logger();
 
