@@ -1,10 +1,10 @@
-.PHONY: test
-test:
-	npm test
-
 .PHONY: install
 install:
 	npm ci
+
+.PHONY: test
+test:
+	npm test
 
 .PHONY: format
 format:

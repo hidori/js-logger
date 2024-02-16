@@ -2,13 +2,14 @@
   "env": {
     "node": true,
     "es6": true,
-    "commonjs": true
+    "commonjs": false,
+    "jest/globals": true
   },
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": "latest"
   },
-  "plugins": [],
+  "plugins": ["jest"],
   "extends": ["eslint:recommended", "prettier"],
   "rules": {
     "quotes": [
