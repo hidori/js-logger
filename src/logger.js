@@ -1,27 +1,28 @@
-"use strict";
+import fs from "fs";
+
+export const levelDebug = "debug";
+export const levelInfo = "info";
+export const levelWarn = "warn";
+export const levelError = "error";
+export const levelFatal = "fatal";
+export const levelNone = "none";
 
 export class Logger {
   constructor(options) {
-    if (!options) {
-      if (!options.level) {
-        this.#level = options.level;
-      }
-
-      if (!options.format) {
-        this.#format = options.format;
-      }
-
-      if (!options.write) {
-        this.#write = options.write;
-      }
+    if (options) {
+      this.#options = Object.assign(this.#options, options);
     }
 
-    this.#applyLevel(this.#level);
+    this.#applyLevel(this.#options.level);
   }
 
-  #level = "debug";
-  #format = Logger.formatText;
-  #write = console.log;
+  #options = {
+    level: levelDebug,
+    presenter: new Presenter(new TextFormatter(), new ConsoleWriter()),
+    now: () => {
+      return new Date();
+    },
+  };
 
   #debug;
   #info;
@@ -30,90 +31,141 @@ export class Logger {
   #fatal;
 
   #applyLevel(level) {
-    this.#debug = this.#drop;
-    this.#info = this.#drop;
-    this.#warn = this.#drop;
-    this.#error = this.#drop;
-    this.#fatal = this.#drop;
+    const drop = () => {
+      // nothing to do.
+    };
+    const printf = (level, data) => {
+      this.#options.presenter.printf(this.#options.now(), level, data);
+    };
+
+    this.#debug = drop;
+    this.#info = drop;
+    this.#warn = drop;
+    this.#error = drop;
+    this.#fatal = drop;
 
     switch (level.toLowerCase()) {
-      case "debug":
-        this.#debug = this.#output;
+      case levelDebug:
+        this.#debug = printf;
       // falls through
-      case "info":
-        this.#info = this.#output;
+      case levelInfo:
+        this.#info = printf;
       // falls through
-      case "warn":
-        this.#warn = this.#output;
+      case levelWarn:
+        this.#warn = printf;
       // falls through
-      case "error":
-        this.#error = this.#output;
+      case levelError:
+        this.#error = printf;
       // falls through
-      case "fatal":
-        this.#fatal = this.#output;
+      case levelFatal:
+        this.#fatal = printf;
         break;
-      case "none":
+      case levelNone:
         break;
       default:
         throw `unknown level '${level}'`;
     }
   }
 
-  #drop() {
-    // nothing to do.
-  }
-
-  #output(level, data) {
-    this.#write(this.#format(new Date(), level.toUpperCase(), data));
-  }
-
   debug(data) {
-    this.#debug("debug", data);
+    this.#debug(levelDebug, data);
   }
 
   info(data) {
-    this.#info("info", data);
+    this.#info(levelInfo, data);
   }
 
   warn(data) {
-    this.#warn("warn", data);
+    this.#warn(levelWarn, data);
   }
 
   error(data) {
-    this.#error("error", data);
+    this.#error(levelError, data);
   }
 
   fatal(data) {
-    this.#fatal("fatal", data);
+    this.#fatal(levelFatal, data);
+  }
+}
+
+export class Presenter {
+  constructor(formatter, writer) {
+    this.#format = (timestamp, level, data) => {
+      return formatter.format(timestamp, level, data);
+    };
+    this.#write = (data) => {
+      writer.write(data);
+    };
   }
 
-  static formatText(timestamp, level, data) {
-    return `${Logger.toISOStringWithTimezone(timestamp)} [${level}] ${data}`;
-  }
+  #format;
+  #write;
 
-  static formatJson(timestamp, level, data) {
+  printf(timestamp, level, data) {
+    this.#write(this.#format(timestamp, level, data));
+  }
+}
+
+export class TextFormatter {
+  format(timestamp, level, data) {
+    return `${toISOStringWithTimezone(timestamp)} [${level.toUpperCase()}] ${data}`;
+  }
+}
+
+export class JSONFormatter {
+  format(timestamp, level, data) {
     return JSON.stringify({
-      timestamp: Logger.toISOStringWithTimezone(timestamp),
+      timestamp: toISOStringWithTimezone(timestamp),
       level: level,
       data: data,
     });
   }
+}
 
-  static toISOStringWithTimezone(date) {
-    const pad = function (str) {
-      return ("0" + str).slice(-2);
-    };
-    const year = date.getFullYear().toString();
-    const month = pad((date.getMonth() + 1).toString());
-    const day = pad(date.getDate().toString());
-    const hour = pad(date.getHours().toString());
-    const min = pad(date.getMinutes().toString());
-    const sec = pad(date.getSeconds().toString());
-    const tz = -date.getTimezoneOffset();
-    const sign = tz >= 0 ? "+" : "-";
-    const tzHour = pad((tz / 60).toString());
-    const tzMin = pad((tz % 60).toString());
-
-    return `${year}-${month}-${day}T${hour}:${min}:${sec}${sign}${tzHour}:${tzMin}`;
+export class ConsoleWriter {
+  write(data) {
+    console.log(data);
   }
+}
+
+export class FileWriter {
+  constructor(path) {
+    this.#path = path;
+  }
+
+  #path;
+
+  write(data) {
+    fs.appendFileSync(this.#path, data + "\n");
+  }
+}
+
+export class StringWriter {
+  #str = "";
+
+  write(data) {
+    this.#str = `${this.#str}${data}\n`;
+  }
+
+  toString() {
+    return this.#str;
+  }
+}
+
+export function toISOStringWithTimezone(date) {
+  const pad = function (str) {
+    return ("0" + str).slice(-2);
+  };
+  const year = date.getFullYear().toString();
+  const month = pad((date.getMonth() + 1).toString());
+  const day = pad(date.getDate().toString());
+  const hour = pad(date.getHours().toString());
+  const min = pad(date.getMinutes().toString());
+  const sec = pad(date.getSeconds().toString());
+  const tz = -date.getTimezoneOffset();
+  const sign = tz >= 0 ? "+" : "-";
+  const tzHour = pad((tz / 60).toString());
+  const tzMin = pad((tz % 60).toString());
+
+  return `${year}-${month}-${day}T${hour}:${min}:${sec}${sign}${tzHour}:${tzMin}`;
 }
