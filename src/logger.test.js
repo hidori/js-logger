@@ -135,7 +135,7 @@ describe("Logger", () => {
 
 describe("Presenter", () => {
   describe("printf()", () => {
-    test("calls formatter.fomat() ad writer.write()", () => {
+    test("calls formatter.fomat() and writer.write()", () => {
       const format = jest.fn((timestamp, level, data) => {
         expect(timestamp).toBe(now);
         expect(level).toBe("printf.level");
@@ -153,3 +153,23 @@ describe("Presenter", () => {
     });
   });
 });
+
+describe("TextFormatter", () => {
+  describe("formt()", () => {
+    const target = new Logger.TextFormatter();
+
+    expect(target.format(now, "format.level", "format.data")).toBe("2024-03-16T09:00:00+09:00 [FORMAT.LEVEL] format.data");
+  })
+})
+
+describe("JSONFormatter", () => {
+  describe("formt()", () => {
+    const target = new Logger.JSONFormatter();
+
+    expect(target.format(now, "format.level", "format.data")).toBe(JSON.stringify({
+      timestamp: Logger.toISOStringWithTimezone(now),
+      level: "format.level",
+      data: "format.data",
+    }));
+  })
+})
