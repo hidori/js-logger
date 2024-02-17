@@ -5,6 +5,7 @@
   "author": "hidori",
   "license": "MIT",
   "keywords": [
+    "es6",
     "logger"
   ],
   "homepage": "https://github.com/hidori/node-logger#readme",
