@@ -1,3 +1,4 @@
+import fs from "fs";
 import { jest } from "@jest/globals";
 import * as Logger from "./logger.js";
 
@@ -186,7 +187,15 @@ describe("class ConsoleWriter", () => {
 
 describe("class FileWriter", () => {
   describe("write()", () => {
-    // TODO:
+    const path = "./file_writer_test.txt";
+    fs.rmSync(path, { force: true });
+
+    const target = new Logger.FileWriter(path);
+    target.write("1");
+    target.write("2");
+    target.write("3");
+    const buf = fs.readFileSync(path);
+    expect(buf.toString()).toBe("1\n2\n3\n");
   });
 });
 
@@ -198,12 +207,6 @@ describe("class StringWriter", () => {
     target.write("2");
     target.write("3");
     expect(target.toString()).toBe("1\n2\n3\n");
-  });
-});
-
-describe("class ConsoleWriter", () => {
-  describe("write()", () => {
-    // TODO:
   });
 });
 
