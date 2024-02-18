@@ -5,57 +5,106 @@ Simple and flexible logger
 ## INSTALL
 
 ```sh
-npm i @hidori/logger --save
+npm i --save @hidori/logger
 ```
 
 ## USAGE
 
-### TEXT OUTPUT (Default)
+### TEXT OUTPUT
 
+Code:
 ```js
-import { Logger } from "@hidor/logger";
+import * as Logger from "@hidori/logger";
 
-const logger = new Logger();
+const logger = new Logger.Logger();
 
-logger.info("hello");
+logger.debugSync("hello");
+logger.infoSync("hello");
+logger.warnSync("hello");
+logger.errorSync("hello");
+logger.fatalSync("hello");
+
+(async () => {
+  await logger.debug("hello");
+  await logger.info("hello");
+  await logger.warn("hello");
+  await logger.error("hello");
+  await logger.fatal("hello");
+})();
 ```
 
 Output:
 ```log
-2024-02-11T22:11:08+09:00 [INFO] hello
+2024-02-18T23:15:57.767+09:00 [DEBUG] hello
+2024-02-18T23:15:57.774+09:00 [INFO] hello
+2024-02-18T23:15:57.775+09:00 [WARN] hello
+2024-02-18T23:15:57.775+09:00 [ERROR] hello
+2024-02-18T23:15:57.775+09:00 [FATAL] hello
+2024-02-18T23:15:57.775+09:00 [DEBUG] hello
+2024-02-18T23:15:57.775+09:00 [INFO] hello
+2024-02-18T23:15:57.775+09:00 [WARN] hello
+2024-02-18T23:15:57.776+09:00 [ERROR] hello
+2024-02-18T23:15:57.776+09:00 [FATAL] hello
 ```
 
 ### JSON OUTPUT
 
+Code:
 ```js
-import { Logger } from "@hidor/logger";
+import * as Logger from "@hidori/logger";
 
-const logger = new Logger({
-    format: Logger.formatJson
+const logger = new Logger.Logger({
+  formatter: new Logger.JSONFormatter(),
 });
 
-logger.info({
-    key: "ABC",
-    value: "123"
-});
+logger.debugSync("hello");
+logger.infoSync("hello");
+logger.warnSync("hello");
+logger.errorSync("hello");
+logger.fatalSync("hello");
+
+(async () => {
+  await logger.debug("hello");
+  await logger.info("hello");
+  await logger.warn("hello");
+  await logger.error("hello");
+  await logger.fatal("hello");
+})();
 ```
 
 Output:
 ```json
-{"timestamp":"2024-02-11T22:17:59+09:00","level":"INFO","data":{"key":"ABC","value":"123"}}
+{"timestamp":"2024-02-18T23:15:57.722+09:00","level":"debug","data":"hello"}
+{"timestamp":"2024-02-18T23:15:57.727+09:00","level":"info","data":"hello"}
+{"timestamp":"2024-02-18T23:15:57.727+09:00","level":"warn","data":"hello"}
+{"timestamp":"2024-02-18T23:15:57.727+09:00","level":"error","data":"hello"}
+{"timestamp":"2024-02-18T23:15:57.727+09:00","level":"fatal","data":"hello"}
+{"timestamp":"2024-02-18T23:15:57.728+09:00","level":"debug","data":"hello"}
+{"timestamp":"2024-02-18T23:15:57.728+09:00","level":"info","data":"hello"}
+{"timestamp":"2024-02-18T23:15:57.728+09:00","level":"warn","data":"hello"}
+{"timestamp":"2024-02-18T23:15:57.728+09:00","level":"error","data":"hello"}
+{"timestamp":"2024-02-18T23:15:57.728+09:00","level":"fatal","data":"hello"}
 ```
 
 ## API
 
+### ASYNC
+
+Signature:
 ```js
 logger.xxx(data)
 ```
+xxx is one of the [LEVELS](#LEVELS)
 
-Note:
+### SYNC
 
-* xxx is one of the [Levels](#Levels)
+Signature:
+```js
+logger.xxxSync(data)
+```
+xxx is one of the [LEVELS](#LEVELS)
 
-### <a href="#Levels"></a>Levels
+### <a href="#LEVELS"></a>LEVELS
 
 * debug
 * info
@@ -67,109 +116,227 @@ Note:
 
 ### LEVEL
 
+Code:
 ```js
-const logger = new Logger({
-    level: "error"
+import * as Logger from "@hidori/logger";
+
+const logger = new Logger.Logger({
+  level: Logger.levelError,
 });
 
-logger.debug("hello");
-logger.info("hello");
-logger.warn("hello");
-logger.error("hello");
-logger.fatal("hello");
+logger.debugSync("hello");
+logger.infoSync("hello");
+logger.warnSync("hello");
+logger.errorSync("hello");
+logger.fatalSync("hello");
+
+(async () => {
+  await logger.debug("hello");
+  await logger.info("hello");
+  await logger.warn("hello");
+  await logger.error("hello");
+  await logger.fatal("hello");
+})();
 ```
 
 Output:
-
 ```log
-2024-02-11T22:11:08+09:00 [ERROR] hello
-2024-02-11T22:11:08+09:00 [FATAL] hello
+2024-02-18T23:52:35.574+09:00 [ERROR] hello
+2024-02-18T23:52:35.579+09:00 [FATAL] hello
+2024-02-18T23:52:35.579+09:00 [ERROR] hello
+2024-02-18T23:52:35.579+09:00 [FATAL] hello
 ```
 
-Level and output:
-
-| level | debug() | info() | warn() | error() | fatal() |
+Relationship between level and output:
+| level | debug()/debugSync() | info()/infoSync() | warn()/warnSync() | error()/errorSync() | fatal()/fatalSync() |
 | :-- | :-- | :-- | :-- | :-- | :-- |
-| "debug" | O | O | O | O | O |
-| "info"  | - | O | O | O | O |
-| "warn"  | - | - | O | O | O |
-| "error" | - | - | - | O | O |
-| "fatal" | - | - | - | - | O |
-| "none"  | - | - | - | - | - |
+| levelDebug | O | O | O | O | O |
+| levelInfo  | - | O | O | O | O |
+| levelWarn  | - | - | O | O | O |
+| levelError | - | - | - | O | O |
+| levelFatal | - | - | - | - | O |
+| levelNone  | - | - | - | - | - |
 
-### FORMAT
+### FORMATTER
 
-#### BUILTIN TEXT FORMATTER
+#### BUILTIN TEXT FORMATTER (DEFAULT)
 
+Code:
 ```js
-const logger = new Logger({
-    format: Logger.formatText
+import * as Logger from "../src/index.js";
+
+const logger = new Logger.Logger({
+  formatter: new Logger.TextFormatter(),
 });
 
-logger.info("hello");
+logger.infoSync("hello");
+
+(async () => {
+  await logger.info({
+    key: "ABC",
+    value: "123",
+  });
+})();
 ```
 
 Output:
 ```log
-2024-02-11T22:11:08+09:00 [INFO] hello
+2024-02-19T00:20:33.075+09:00 [INFO] hello
+2024-02-19T00:20:33.075+09:00 [INFO] hello
 ```
 #### BUILTIN JSON FORMATTER
 
+Code:
 ```js
-const logger = new Logger({
-    format: Logger.formatJson
+import * as Logger from "@hidori/logger";
+
+const logger = new Logger.Logger({
+  formatter: new Logger.TextFormatter(),
 });
 
-logger.info({
-    key: "ABC",
-    value: "123"
+logger.infoSync({
+  key: "ABC",
+  value: "123",
 });
+
+(async () => {
+  await logger.info({
+    key: "ABC",
+    value: "123",
+  });
+})();
 ```
 
 Output:
 ```json
-{"timestamp":"2024-02-11T22:17:59+09:00","level":"INFO","data":{"key":"ABC","value":"123"}}
+{"timestamp":"2024-02-19T00:20:33.037+09:00","level":"info","data":{"key":"ABC","value":"123"}}
+{"timestamp":"2024-02-19T00:20:33.037+09:00","level":"info","data":{"key":"ABC","value":"123"}}
 ```
 
-#### CUSTOM FORMATTER (Example)
+#### CUSTOM FORMATTER
 
+Code:
 ```js
-const logger = new Logger({
+const logger = new Logger.Logger({
+  formatter: {
     format: (timestamp, level, data) => {
-        return `${Logger.toISOStringWithTimezone(timestamp)} [${level}] ${JSON.stringify(data)}`
+      return `${Logger.toISOStringWithTimezone(timestamp)} [${level.toUpperCase()}] ${JSON.stringify(data)}`;
     }
+  },
 });
 
-logger.info({
-    key: "ABC",
-    value: "123"
+logger.infoSync({
+  key: "ABC",
+  value: "123",
 });
+
+(async () => {
+  await logger.info({
+    key: "ABC",
+    value: "123",
+  });
+})();
 ```
 
 Output:
 ```log
-2024-02-11T22:11:08+09:00 [INFO] {"key":"ABC","value":"123"}
+2024-02-19T00:34:44.174+09:00 [INFO] {"key":"ABC","value":"123"}
+2024-02-19T00:34:44.179+09:00 [INFO] {"key":"ABC","value":"123"}
 ```
 
-### WRITE
+### WRITER
 
-```js
-import { Logger } from "@hidor/logger";
+#### BUILTIN CONSOLE WRITER (DEFAULT)
 
-const logger = new Logger({
-    write: (data) => {
-        const fileName = path.join(process.env.HOME, "log.txt");
-        fs.appendFileSync(fileName, data + "\n");
-    }
+Code:
+```go
+import * as Logger from "@hidori/logger";
+
+const writer = new Logger.ConsoleWriter();
+const logger = new Logger.Logger({
+  writer: writer,
 });
 
-logger.info("hello");
+logger.infoSync("hello");
+
+(async () => {
+  await logger.info("hello");
+})();
+```
+
+Output:
+```log
+2024-02-19T00:56:08.305+09:00 [INFO] hello
+2024-02-19T00:56:08.309+09:00 [INFO] hello
+```
+
+#### BUILTIN STRING WRITER
+
+Code:
+```go
+import * as Logger from "@hidori/logger";
+
+const writer = new Logger.StringWriter();
+const logger = new Logger.Logger({
+  writer: writer,
+});
+
+logger.infoSync("hello");
+
+(async () => {
+  await logger.info("hello");
+})();
+
+console.log(writer.toString());
+```
+
+Output:
+```log
+2024-02-19T00:56:08.398+09:00 [INFO] hello
+2024-02-19T00:56:08.398+09:00 [INFO] hello
+```
+
+#### CUSTOM WRITER
+
+Code:
+```js
+import fs from "fs";
+import path from "path";
+
+import * as Logger from "@hidori/logger";
+
+const logger = new Logger.Logger({
+  writer: {
+    write: async (text) => {
+      const fileName = path.join(
+        process.env.HOME,
+        "./example_config_writer_custom.txt",
+      );
+      fs.appendFileSync(fileName, text + "\n");
+    },
+
+    writeSync: (text) => {
+      const fileName = path.join(
+        process.env.HOME,
+        "./example_config_writer_custom.txt",
+      );
+      fs.appendFileSync(fileName, text + "\n");
+    },
+  },
+});
+
+logger.infoSync("hello");
+
+(async () => {
+  await logger.info("hello");
+})();
 ```
 
 Output:
 ```sh
-$ cat ~/log.txt
-2024-02-11T22:11:08+09:00 [INFO] hello
+$ cat ~/example_config_writer_custom.txt
+2024-02-19T00:48:08.529+09:00 [INFO] hello
+2024-02-19T00:48:08.529+09:00 [INFO] hello
 ```
 
 ## LICENSE

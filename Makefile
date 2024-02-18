@@ -10,6 +10,14 @@ test:
 format:
 	npm run format
 
+.PHONY: run
+run:
+	@for f in `find ./example -type f -name '*.js' | sort`; do \
+		echo $${f}; \
+		node $${f}; \
+		echo ""; \
+	done
+
 .PHONY: version-patch
 version-patch:
 	npm version patch

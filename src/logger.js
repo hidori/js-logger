@@ -1,4 +1,6 @@
-import fs from "fs";
+import * as Formatter from "./formatter.js";
+import * as Presenter from "./presenter.js";
+import * as Writer from "./writer.js";
 
 export const levelDebug = "debug";
 export const levelInfo = "info";
@@ -7,22 +9,29 @@ export const levelError = "error";
 export const levelFatal = "fatal";
 export const levelNone = "none";
 
+const defaultOptions = {
+  level: levelDebug,
+  formatter: new Formatter.TextFormatter(),
+  writer: new Writer.ConsoleWriter(),
+  presenter: null,
+  timestamp: () => new Date(),
+};
+
 export class Logger {
   constructor(options) {
-    if (options) {
-      this.#options = Object.assign(this.#options, options);
-    }
+    options = Object.assign(Object.assign({}, defaultOptions), options);
 
-    this.#applyLevel(this.#options.level);
+    this.#presenter = options.presenter
+      ? options.presenter
+      : new Presenter.Presenter(options.formatter, options.writer);
+    this.#timestamp = options.timestamp;
+
+    this.#applyLevel(options.level);
+    this.#applyLevelSync(options.level);
   }
 
-  #options = {
-    level: levelDebug,
-    presenter: new Presenter(new TextFormatter(), new ConsoleWriter()),
-    now: () => {
-      return new Date();
-    },
-  };
+  #presenter;
+  #timestamp;
 
   #debug;
   #info;
@@ -30,14 +39,13 @@ export class Logger {
   #error;
   #fatal;
 
-  #applyLevel(level) {
-    const drop = () => {
-      // nothing to do.
-    };
-    const printf = (level, data) => {
-      this.#options.presenter.printf(this.#options.now(), level, data);
-    };
+  #debugSync;
+  #infoSync;
+  #warnSync;
+  #errorSync;
+  #fatalSync;
 
+  #applyLevel(level) {
     this.#debug = drop;
     this.#info = drop;
     this.#warn = drop;
@@ -67,105 +75,89 @@ export class Logger {
     }
   }
 
-  debug(data) {
-    this.#debug(levelDebug, data);
+  #applyLevelSync(level) {
+    this.#debugSync = dropSync;
+    this.#infoSync = dropSync;
+    this.#warnSync = dropSync;
+    this.#errorSync = dropSync;
+    this.#fatalSync = dropSync;
+
+    switch (level.toLowerCase()) {
+      case levelDebug:
+        this.#debugSync = printfSync;
+      // falls through
+      case levelInfo:
+        this.#infoSync = printfSync;
+      // falls through
+      case levelWarn:
+        this.#warnSync = printfSync;
+      // falls through
+      case levelError:
+        this.#errorSync = printfSync;
+      // falls through
+      case levelFatal:
+        this.#fatalSync = printfSync;
+        break;
+      case levelNone:
+        break;
+      default:
+        throw `unknown level '${level}'`;
+    }
   }
 
-  info(data) {
-    this.#info(levelInfo, data);
+  async debug(data) {
+    await this.#debug(this.#presenter, this.#timestamp(), levelDebug, data);
   }
 
-  warn(data) {
-    this.#warn(levelWarn, data);
+  async info(data) {
+    await this.#info(this.#presenter, this.#timestamp(), levelInfo, data);
   }
 
-  error(data) {
-    this.#error(levelError, data);
+  async warn(data) {
+    await this.#warn(this.#presenter, this.#timestamp(), levelWarn, data);
   }
 
-  fatal(data) {
-    this.#fatal(levelFatal, data);
-  }
-}
-
-export class Presenter {
-  constructor(formatter, writer) {
-    this.#format = (timestamp, level, data) => {
-      return formatter.format(timestamp, level, data);
-    };
-    this.#write = (data) => {
-      writer.write(data);
-    };
+  async error(data) {
+    await this.#error(this.#presenter, this.#timestamp(), levelError, data);
   }
 
-  #format;
-  #write;
-
-  printf(timestamp, level, data) {
-    this.#write(this.#format(timestamp, level, data));
-  }
-}
-
-export class TextFormatter {
-  format(timestamp, level, data) {
-    return `${toISOStringWithTimezone(timestamp)} [${level.toUpperCase()}] ${data}`;
-  }
-}
-
-export class JSONFormatter {
-  format(timestamp, level, data) {
-    return JSON.stringify({
-      timestamp: toISOStringWithTimezone(timestamp),
-      level: level,
-      data: data,
-    });
-  }
-}
-
-export class ConsoleWriter {
-  write(data) {
-    console.log(data);
-  }
-}
-
-export class FileWriter {
-  constructor(path) {
-    this.#path = path;
+  async fatal(data) {
+    await this.#fatal(this.#presenter, this.#timestamp(), levelFatal, data);
   }
 
-  #path;
+  debugSync(data) {
+    this.#debugSync(this.#presenter, this.#timestamp(), levelDebug, data);
+  }
 
-  write(data) {
-    fs.appendFileSync(this.#path, data + "\n");
+  infoSync(data) {
+    this.#infoSync(this.#presenter, this.#timestamp(), levelInfo, data);
+  }
+
+  warnSync(data) {
+    this.#warnSync(this.#presenter, this.#timestamp(), levelWarn, data);
+  }
+
+  errorSync(data) {
+    this.#errorSync(this.#presenter, this.#timestamp(), levelError, data);
+  }
+
+  fatalSync(data) {
+    this.#fatalSync(this.#presenter, this.#timestamp(), levelFatal, data);
   }
 }
 
-export class StringWriter {
-  #str = "";
-
-  write(data) {
-    this.#str = `${this.#str}${data}\n`;
-  }
-
-  toString() {
-    return this.#str;
-  }
+function drop() {
+  // nothing to do.
 }
 
-export function toISOStringWithTimezone(date) {
-  const pad = function (str) {
-    return ("0" + str).slice(-2);
-  };
-  const year = date.getFullYear().toString();
-  const month = pad((date.getMonth() + 1).toString());
-  const day = pad(date.getDate().toString());
-  const hour = pad(date.getHours().toString());
-  const min = pad(date.getMinutes().toString());
-  const sec = pad(date.getSeconds().toString());
-  const tz = -date.getTimezoneOffset();
-  const sign = tz >= 0 ? "+" : "-";
-  const tzHour = pad((tz / 60).toString());
-  const tzMin = pad((tz % 60).toString());
+function printf(presenter, now, level, data) {
+  presenter.printf(now, level, data);
+}
 
-  return `${year}-${month}-${day}T${hour}:${min}:${sec}${sign}${tzHour}:${tzMin}`;
+function dropSync() {
+  // nothing to do.
+}
+
+function printfSync(presenter, timestamp, level, data) {
+  presenter.printfSync(timestamp, level, data);
 }
