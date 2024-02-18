@@ -12,7 +12,7 @@ npm i --save @hidori/logger
 
 ### TEXT OUTPUT
 
-Code:
+CODE:
 ```js
 import * as Logger from "@hidori/logger";
 
@@ -33,7 +33,7 @@ logger.fatalSync("hello");
 })();
 ```
 
-Output:
+OUTPUT:
 ```log
 2024-02-18T23:15:57.767+09:00 [DEBUG] hello
 2024-02-18T23:15:57.774+09:00 [INFO] hello
@@ -49,7 +49,7 @@ Output:
 
 ### JSON OUTPUT
 
-Code:
+CODE:
 ```js
 import * as Logger from "@hidori/logger";
 
@@ -72,7 +72,7 @@ logger.fatalSync("hello");
 })();
 ```
 
-Output:
+OUTPUT:
 ```json
 {"timestamp":"2024-02-18T23:15:57.722+09:00","level":"debug","data":"hello"}
 {"timestamp":"2024-02-18T23:15:57.727+09:00","level":"info","data":"hello"}
@@ -90,7 +90,7 @@ Output:
 
 ### ASYNC
 
-Signature:
+SIGNATURE:
 ```js
 logger.xxx(data)
 ```
@@ -98,7 +98,7 @@ xxx is one of the [LEVELS](#LEVELS)
 
 ### SYNC
 
-Signature:
+SIGNATURE:
 ```js
 logger.xxxSync(data)
 ```
@@ -116,7 +116,7 @@ xxx is one of the [LEVELS](#LEVELS)
 
 ### LEVEL
 
-Code:
+CODE:
 ```js
 import * as Logger from "@hidori/logger";
 
@@ -139,7 +139,7 @@ logger.fatalSync("hello");
 })();
 ```
 
-Output:
+OUTPUT:
 ```log
 2024-02-18T23:52:35.574+09:00 [ERROR] hello
 2024-02-18T23:52:35.579+09:00 [FATAL] hello
@@ -161,7 +161,7 @@ Relationship between level and output:
 
 #### BUILTIN TEXT FORMATTER (DEFAULT)
 
-Code:
+CODE:
 ```js
 import * as Logger from "../src/index.js";
 
@@ -179,14 +179,14 @@ logger.infoSync("hello");
 })();
 ```
 
-Output:
+OUTPUT:
 ```log
 2024-02-19T00:20:33.075+09:00 [INFO] hello
 2024-02-19T00:20:33.075+09:00 [INFO] hello
 ```
 #### BUILTIN JSON FORMATTER
 
-Code:
+CODE:
 ```js
 import * as Logger from "@hidori/logger";
 
@@ -207,7 +207,7 @@ logger.infoSync({
 })();
 ```
 
-Output:
+OUTPUT:
 ```json
 {"timestamp":"2024-02-19T00:20:33.037+09:00","level":"info","data":{"key":"ABC","value":"123"}}
 {"timestamp":"2024-02-19T00:20:33.037+09:00","level":"info","data":{"key":"ABC","value":"123"}}
@@ -215,7 +215,7 @@ Output:
 
 #### CUSTOM FORMATTER
 
-Code:
+CODE:
 ```js
 const logger = new Logger.Logger({
   formatter: {
@@ -238,7 +238,7 @@ logger.infoSync({
 })();
 ```
 
-Output:
+OUTPUT:
 ```log
 2024-02-19T00:34:44.174+09:00 [INFO] {"key":"ABC","value":"123"}
 2024-02-19T00:34:44.179+09:00 [INFO] {"key":"ABC","value":"123"}
@@ -248,7 +248,7 @@ Output:
 
 #### BUILTIN CONSOLE WRITER (DEFAULT)
 
-Code:
+CODE:
 ```go
 import * as Logger from "@hidori/logger";
 
@@ -264,7 +264,7 @@ logger.infoSync("hello");
 })();
 ```
 
-Output:
+OUTPUT:
 ```log
 2024-02-19T00:56:08.305+09:00 [INFO] hello
 2024-02-19T00:56:08.309+09:00 [INFO] hello
@@ -272,7 +272,7 @@ Output:
 
 #### BUILTIN STRING WRITER
 
-Code:
+CODE:
 ```go
 import * as Logger from "@hidori/logger";
 
@@ -290,7 +290,7 @@ logger.infoSync("hello");
 console.log(writer.toString());
 ```
 
-Output:
+OUTPUT:
 ```log
 2024-02-19T00:56:08.398+09:00 [INFO] hello
 2024-02-19T00:56:08.398+09:00 [INFO] hello
@@ -298,7 +298,7 @@ Output:
 
 #### CUSTOM WRITER
 
-Code:
+CODE:
 ```js
 import fs from "fs";
 import path from "path";
@@ -332,7 +332,7 @@ logger.infoSync("hello");
 })();
 ```
 
-Output:
+OUTPUT:
 ```sh
 $ cat ~/example_config_writer_custom.txt
 2024-02-19T00:48:08.529+09:00 [INFO] hello
