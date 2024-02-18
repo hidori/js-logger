@@ -20,7 +20,10 @@
   "type": "module",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "format": "eslint ./src ./example --fix && prettier --write ./src ./example"
+    "format": "eslint ./src ./example --fix && prettier --write ./src ./example",
+    "preversion": "npm test && make run",
+    "version": "git add --all",
+    "postversion": "git push && git push --tags"
   },
   "devDependencies": {
     "eslint": "^8.56.0",
