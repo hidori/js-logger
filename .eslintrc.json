@@ -11,7 +11,8 @@
   },
   "extends": [
     "eslint:recommended",
-    "prettier"
+    "prettier",
+    "plugin:security/recommended"
   ],
   "plugins": [
     "import",
