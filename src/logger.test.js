@@ -1,12 +1,12 @@
-import * as Formatter from "./formatter.js";
-import * as Logger from "./logger.js";
-import * as Writer from "./writer.js";
+import * as Formatter from './formatter.js';
+import * as Logger from './logger.js';
+import * as Writer from './writer.js';
 
 const timestamp = () => new Date(2024, 0, 1, 2, 3, 4, 5, 6);
 
-describe("class Logger", () => {
-  describe("xxx()", () => {
-    test("level=levelNone, outputs anything", async () => {
+describe('class Logger', () => {
+  describe('xxx()', () => {
+    test('level=levelNone, outputs anything', async () => {
       const writer = new Writer.StringWriter();
       const options = {
         level: Logger.levelNone,
@@ -15,15 +15,15 @@ describe("class Logger", () => {
       };
 
       const target = new Logger.Logger(options);
-      await target.debug("hello");
-      await target.info("hello");
-      await target.warn("hello");
-      await target.error("hello");
-      await target.fatal("hello");
-      expect(writer.toString()).toBe("");
+      await target.debug('hello');
+      await target.info('hello');
+      await target.warn('hello');
+      await target.error('hello');
+      await target.fatal('hello');
+      expect(writer.toString()).toBe('');
     });
 
-    test("level=levelDebug, outputs `debug`, `info`, `warn`, `error`, `fatal` log(s)", async () => {
+    test('level=levelDebug, outputs `debug`, `info`, `warn`, `error`, `fatal` log(s)', async () => {
       const writer = new Writer.StringWriter();
       const options = {
         level: Logger.levelDebug,
@@ -32,11 +32,11 @@ describe("class Logger", () => {
       };
 
       const target = new Logger.Logger(options);
-      await target.debug("hello");
-      await target.info("hello");
-      await target.warn("hello");
-      await target.error("hello");
-      await target.fatal("hello");
+      await target.debug('hello');
+      await target.info('hello');
+      await target.warn('hello');
+      await target.error('hello');
+      await target.fatal('hello');
       expect(writer.toString()).toBe(
         [
           `${Formatter.toISOStringWithTimezone(timestamp())} [DEBUG] hello\n`,
@@ -44,11 +44,11 @@ describe("class Logger", () => {
           `${Formatter.toISOStringWithTimezone(timestamp())} [WARN] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [ERROR] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [FATAL] hello\n`,
-        ].join(""),
+        ].join(''),
       );
     });
 
-    test("level=levelInfo, outputs `info`, `warn`, `error`, `fatal` log(s)", async () => {
+    test('level=levelInfo, outputs `info`, `warn`, `error`, `fatal` log(s)', async () => {
       const writer = new Writer.StringWriter();
       const options = {
         level: Logger.levelInfo,
@@ -57,22 +57,22 @@ describe("class Logger", () => {
       };
 
       const target = new Logger.Logger(options);
-      await target.debug("hello");
-      await target.info("hello");
-      await target.warn("hello");
-      await target.error("hello");
-      await target.fatal("hello");
+      await target.debug('hello');
+      await target.info('hello');
+      await target.warn('hello');
+      await target.error('hello');
+      await target.fatal('hello');
       expect(writer.toString()).toBe(
         [
           `${Formatter.toISOStringWithTimezone(timestamp())} [INFO] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [WARN] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [ERROR] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [FATAL] hello\n`,
-        ].join(""),
+        ].join(''),
       );
     });
 
-    test("level=levelWarn, outputs `warn`, `error`, `fatal` log(s)", async () => {
+    test('level=levelWarn, outputs `warn`, `error`, `fatal` log(s)', async () => {
       const writer = new Writer.StringWriter();
       const options = {
         level: Logger.levelWarn,
@@ -81,21 +81,21 @@ describe("class Logger", () => {
       };
 
       const target = new Logger.Logger(options);
-      await target.debug("hello");
-      await target.info("hello");
-      await target.warn("hello");
-      await target.error("hello");
-      await target.fatal("hello");
+      await target.debug('hello');
+      await target.info('hello');
+      await target.warn('hello');
+      await target.error('hello');
+      await target.fatal('hello');
       expect(writer.toString()).toBe(
         [
           `${Formatter.toISOStringWithTimezone(timestamp())} [WARN] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [ERROR] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [FATAL] hello\n`,
-        ].join(""),
+        ].join(''),
       );
     });
 
-    test("level=levelError, outputs `error`, `fatal` log(s)", async () => {
+    test('level=levelError, outputs `error`, `fatal` log(s)', async () => {
       const writer = new Writer.StringWriter();
       const options = {
         level: Logger.levelError,
@@ -104,20 +104,20 @@ describe("class Logger", () => {
       };
 
       const target = new Logger.Logger(options);
-      await target.debug("hello");
-      await target.info("hello");
-      await target.warn("hello");
-      await target.error("hello");
-      await target.fatal("hello");
+      await target.debug('hello');
+      await target.info('hello');
+      await target.warn('hello');
+      await target.error('hello');
+      await target.fatal('hello');
       expect(writer.toString()).toBe(
         [
           `${Formatter.toISOStringWithTimezone(timestamp())} [ERROR] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [FATAL] hello\n`,
-        ].join(""),
+        ].join(''),
       );
     });
 
-    test("level=levelFatal, outputs `fatal` log(s)", async () => {
+    test('level=levelFatal, outputs `fatal` log(s)', async () => {
       const writer = new Writer.StringWriter();
       const options = {
         level: Logger.levelFatal,
@@ -126,21 +126,21 @@ describe("class Logger", () => {
       };
 
       const target = new Logger.Logger(options);
-      await target.debug("hello");
-      await target.info("hello");
-      await target.warn("hello");
-      await target.error("hello");
-      await target.fatal("hello");
+      await target.debug('hello');
+      await target.info('hello');
+      await target.warn('hello');
+      await target.error('hello');
+      await target.fatal('hello');
       expect(writer.toString()).toBe(
         [
           `${Formatter.toISOStringWithTimezone(timestamp())} [FATAL] hello\n`,
-        ].join(""),
+        ].join(''),
       );
     });
   });
 
-  describe("xxxSync()", () => {
-    test("level=levelNone, outputs anything", () => {
+  describe('xxxSync()', () => {
+    test('level=levelNone, outputs anything', () => {
       const writer = new Writer.StringWriter();
       const options = {
         level: Logger.levelNone,
@@ -149,15 +149,15 @@ describe("class Logger", () => {
       };
 
       const target = new Logger.Logger(options);
-      target.debugSync("hello");
-      target.infoSync("hello");
-      target.warnSync("hello");
-      target.errorSync("hello");
-      target.fatalSync("hello");
-      expect(writer.toString()).toBe("");
+      target.debugSync('hello');
+      target.infoSync('hello');
+      target.warnSync('hello');
+      target.errorSync('hello');
+      target.fatalSync('hello');
+      expect(writer.toString()).toBe('');
     });
 
-    test("level=levelDebug, outputs `debug`, `info`, `warn`, `error`, `fatal` log(s)", () => {
+    test('level=levelDebug, outputs `debug`, `info`, `warn`, `error`, `fatal` log(s)', () => {
       const writer = new Writer.StringWriter();
       const options = {
         level: Logger.levelDebug,
@@ -166,11 +166,11 @@ describe("class Logger", () => {
       };
 
       const target = new Logger.Logger(options);
-      target.debugSync("hello");
-      target.infoSync("hello");
-      target.warnSync("hello");
-      target.errorSync("hello");
-      target.fatalSync("hello");
+      target.debugSync('hello');
+      target.infoSync('hello');
+      target.warnSync('hello');
+      target.errorSync('hello');
+      target.fatalSync('hello');
       expect(writer.toString()).toBe(
         [
           `${Formatter.toISOStringWithTimezone(timestamp())} [DEBUG] hello\n`,
@@ -178,11 +178,11 @@ describe("class Logger", () => {
           `${Formatter.toISOStringWithTimezone(timestamp())} [WARN] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [ERROR] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [FATAL] hello\n`,
-        ].join(""),
+        ].join(''),
       );
     });
 
-    test("level=levelInfo, outputs `info`, `warn`, `error`, `fatal` log(s)", () => {
+    test('level=levelInfo, outputs `info`, `warn`, `error`, `fatal` log(s)', () => {
       const writer = new Writer.StringWriter();
       const options = {
         level: Logger.levelInfo,
@@ -191,22 +191,22 @@ describe("class Logger", () => {
       };
 
       const target = new Logger.Logger(options);
-      target.debugSync("hello");
-      target.infoSync("hello");
-      target.warnSync("hello");
-      target.errorSync("hello");
-      target.fatalSync("hello");
+      target.debugSync('hello');
+      target.infoSync('hello');
+      target.warnSync('hello');
+      target.errorSync('hello');
+      target.fatalSync('hello');
       expect(writer.toString()).toBe(
         [
           `${Formatter.toISOStringWithTimezone(timestamp())} [INFO] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [WARN] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [ERROR] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [FATAL] hello\n`,
-        ].join(""),
+        ].join(''),
       );
     });
 
-    test("level=levelWarn, outputs `warn`, `error`, `fatal` log(s)", () => {
+    test('level=levelWarn, outputs `warn`, `error`, `fatal` log(s)', () => {
       const writer = new Writer.StringWriter();
       const options = {
         level: Logger.levelWarn,
@@ -215,21 +215,21 @@ describe("class Logger", () => {
       };
 
       const target = new Logger.Logger(options);
-      target.debugSync("hello");
-      target.infoSync("hello");
-      target.warnSync("hello");
-      target.errorSync("hello");
-      target.fatalSync("hello");
+      target.debugSync('hello');
+      target.infoSync('hello');
+      target.warnSync('hello');
+      target.errorSync('hello');
+      target.fatalSync('hello');
       expect(writer.toString()).toBe(
         [
           `${Formatter.toISOStringWithTimezone(timestamp())} [WARN] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [ERROR] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [FATAL] hello\n`,
-        ].join(""),
+        ].join(''),
       );
     });
 
-    test("level=levelError, outputs `error`, `fatal` log(s)", () => {
+    test('level=levelError, outputs `error`, `fatal` log(s)', () => {
       const writer = new Writer.StringWriter();
       const options = {
         level: Logger.levelError,
@@ -238,20 +238,20 @@ describe("class Logger", () => {
       };
 
       const target = new Logger.Logger(options);
-      target.debugSync("hello");
-      target.infoSync("hello");
-      target.warnSync("hello");
-      target.errorSync("hello");
-      target.fatalSync("hello");
+      target.debugSync('hello');
+      target.infoSync('hello');
+      target.warnSync('hello');
+      target.errorSync('hello');
+      target.fatalSync('hello');
       expect(writer.toString()).toBe(
         [
           `${Formatter.toISOStringWithTimezone(timestamp())} [ERROR] hello\n`,
           `${Formatter.toISOStringWithTimezone(timestamp())} [FATAL] hello\n`,
-        ].join(""),
+        ].join(''),
       );
     });
 
-    test("level=levelFatal, outputs `fatal` log(s)", () => {
+    test('level=levelFatal, outputs `fatal` log(s)', () => {
       const writer = new Writer.StringWriter();
       const options = {
         level: Logger.levelFatal,
@@ -260,15 +260,15 @@ describe("class Logger", () => {
       };
 
       const target = new Logger.Logger(options);
-      target.debugSync("hello");
-      target.infoSync("hello");
-      target.warnSync("hello");
-      target.errorSync("hello");
-      target.fatalSync("hello");
+      target.debugSync('hello');
+      target.infoSync('hello');
+      target.warnSync('hello');
+      target.errorSync('hello');
+      target.fatalSync('hello');
       expect(writer.toString()).toBe(
         [
           `${Formatter.toISOStringWithTimezone(timestamp())} [FATAL] hello\n`,
-        ].join(""),
+        ].join(''),
       );
     });
   });
